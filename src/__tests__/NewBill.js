@@ -67,7 +67,7 @@ describe("Given I am connected as an employee", () => {
     })
 
     describe("When i click on submit btn", () => {
-      test("Then the function handleSubmit should be called", () => {
+      test("Then the handleSubmit function should be called and i am redirected to Bills page (view BillUI)", () => {
         const html = NewBillUI();
         document.body.innerHTML = html;
         const newBill = new NewBill({
@@ -82,6 +82,7 @@ describe("Given I am connected as an employee", () => {
         form.addEventListener("submit", handleSubmit);
         fireEvent.submit(form);
         expect(handleSubmit).toHaveBeenCalled();
+        expect(getAllByText(document.body, "Mes notes de frais")).toBeTruthy();
       });
     })
 

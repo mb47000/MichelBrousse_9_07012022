@@ -2,11 +2,10 @@
  * @jest-environment jsdom
  */
 
-import { getAllByTestId, screen } from "@testing-library/dom"
 import BillsUI from "../views/BillsUI.js"
 import { bills } from "../fixtures/bills.js"
 import {
-  getByTestId, getAllByText
+  getByTestId, getAllByText,screen
 } from '@testing-library/dom'
 import { localStorageMock } from "../__mocks__/localStorage.js";
 import Router from "../app/Router.js";
