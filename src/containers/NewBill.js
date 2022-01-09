@@ -23,9 +23,10 @@ export default class NewBill {
     const formData = new FormData()
     const email = JSON.parse(localStorage.getItem("user")).email
 
+    console.log(email)
     // add extension verification 1/2
     const extensions = ["jpg", "jpeg", "png", "JPG", "JPEG", "PNG"];
-    const currenteExtension = fileName.split(".").pop();
+    const currentExtension = file.name.split(".").pop();
 
     // add error message if extension verification fails 1/3
     const errorMsg = document.createElement('div');
@@ -33,13 +34,15 @@ export default class NewBill {
     errorMsg.style.color = 'red';
     errorMsg.innerHTML = "Mauvais format, uniquement jpg, jpeg ou png."
 
+    const targetInput = this.document.querySelector(`input[data-testid="file"]`);
+
     // add extension verification 2/2
-    if (extensions.includes(currenteExtension)) {
+    if (extensions.includes(currentExtension)) {
 
       // add error message if extension verification fails 2/3
-      if (e.target.classList.contains("is-invalid")) {
-        e.target.classList.add("blue-border");
-        e.target.classList.remove("is-invalid")
+      if (targetInput.classList.contains("is-invalid")) {
+        targetInput.classList.add("blue-border");
+        targetInput.classList.remove("is-invalid")
         document.querySelector(".err-msg").remove();
       }
 
@@ -55,24 +58,23 @@ export default class NewBill {
           }
         })
         .then(({ fileUrl, key }) => {
-          console.log(fileUrl)
           this.billId = key
           this.fileUrl = fileUrl
           this.fileName = fileName
         }).catch(error => console.error(error))
     } else {
       // add error message if extension verification fails 3/3
-      e.target.classList.add('is-invalid');
-      e.target.classList.remove("blue-border");
-      e.target.value = ""
+     targetInput.classList.add('is-invalid');
+     targetInput.classList.remove("blue-border");
+     targetInput.value = ""
 
       if (!document.querySelector(".err-msg")) {
-        e.target.after(errorMsg)
+       targetInput.after(errorMsg)
       }
     }
   }
 
-  
+
   handleSubmit = e => {
     e.preventDefault()
     console.log('e.target.querySelector(`input[data-testid="datepicker"]`).value', e.target.querySelector(`input[data-testid="datepicker"]`).value)
