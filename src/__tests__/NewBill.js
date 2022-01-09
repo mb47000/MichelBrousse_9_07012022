@@ -11,6 +11,8 @@ import { rest } from 'msw'
 import { setupServer } from 'msw/node'
 import Store from "../app/Store"
 import 'whatwg-fetch'
+import store from "../__mocks__/store"
+import BillsUI from "../views/BillsUI.js"
 
 const server = setupServer(
   rest.post('http://localhost:5678/bills', (req, res, ctx) => {
@@ -44,7 +46,7 @@ describe("Given I am connected as an employee", () => {
     JSON.stringify({
       type: "Employee",
       email: "mbweb47@gmail.com",
-      jwt:"gfgfdfgdfgdfg"
+      jwt: "gfgfdfgdfgdfg"
     })
   );
 
@@ -74,7 +76,7 @@ describe("Given I am connected as an employee", () => {
           firestore: null,
           localStorage: window.localStorage,
         });
-  
+
         const form = document.querySelector(`form[data-testid="form-new-bill"]`);
         const handleSubmit = jest.fn(newBill.handleSubmit);
         form.addEventListener("submit", handleSubmit);
@@ -123,10 +125,10 @@ describe("Given I am connected as an employee", () => {
           JSON.stringify({
             type: "Employee",
             email: "mbweb47@gmail.com",
-            jwt:"gfgfdfgdfgdfg"
+            jwt: "gfgfdfgdfgdfg"
           })
         );
-        
+
         const html = NewBillUI();
         document.body.innerHTML = html;
         const errorMsg = document.createElement('div');
@@ -159,4 +161,48 @@ describe("Given I am connected as an employee", () => {
       })
     })
   })
-})
+
+  describe("When I post a bill and it save on server", () => {
+    test("Then the total of bills should be increased by 1", async () => {
+      const postSpy = jest.spyOn(store, "post");
+      const newBillForTest = {
+        id: "GdkDKEIOZOoR",
+        vat: "23",
+        amount: 345,
+        name: "test integration post",
+        fileName: "billtest",
+        commentary: "note de frais pour test",
+        pct: 43,
+        type: "Transport",
+        email: "mbweb@gmail.com",
+        fileUrl:
+          "https://image-test.jpg",
+        date: "2004-12-04",
+        status: "pending",
+        commentAdmin: "test comment",
+      };
+      const allBills = await store.post(newBillForTest);
+      expect(postSpy).toHaveBeenCalledTimes(1);
+      expect(allBills.data.length).toBe(5);
+    });
+
+    test("fetches bills from an API and fails with 404 message error", async () => {
+      store.post.mockImplementationOnce(() =>
+        Promise.reject(new Error("Erreur 404"))
+      );
+      const html = BillsUI({ error: "Erreur 404" });
+      document.body.innerHTML = html;
+      const message = await screen.getByText(/Erreur 404/);
+      expect(message).toBeTruthy();
+    });
+    test("fetches messages from an API and fails with 500 message error", async () => {
+      store.post.mockImplementationOnce(() =>
+        Promise.reject(new Error("Erreur 500"))
+      );
+      const html = BillsUI({ error: "Erreur 500" });
+      document.body.innerHTML = html;
+      const message = await screen.getByText(/Erreur 500/);
+      expect(message).toBeTruthy();
+    });
+  });
+});

@@ -1,3 +1,5 @@
+import store from "./store";
+
 export default {
   get: () => {
     return Promise.resolve({
@@ -62,5 +64,28 @@ export default {
         "fileUrl": "https://test.storage.tld/v0/b/billable-677b6.a…f-1.jpg?alt=media&token=4df6ed2c-12c8-42a2-b013-346c1346f732"
       }]
     })
-  }
+  },
+  post: async (newBillData) => {
+    const bills = await store.get();
+    return Promise.resolve({
+      data: [
+        ...bills.data,
+        {
+          id: newBillData.id,
+          status: newBillData.status,
+          pct: newBillData.pct,
+          amount: newBillData.amount,
+          email: newBillData.email,
+          name: newBillData.name,
+          vat: newBillData.vat,
+          fileName: newBillData.fileName,
+          date: newBillData.date,
+          commentAdmin: newBillData.commentAdmin,
+          commentary: newBillData.commentary,
+          type: newBillData.type,
+          fileUrl: newBillData.fileUrl,
+        },
+      ],
+    });
+  },
 }
