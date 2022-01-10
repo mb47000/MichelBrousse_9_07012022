@@ -1,2 +1,6 @@
 node_modules
 coverage
+test_output
+tests_output/
+
+chromedriver.log
